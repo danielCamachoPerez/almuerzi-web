@@ -47,7 +47,7 @@ window.onload = () => {
             user_id: 'Itzel',
         }
 
-        fetch('http://localhost:3000/api/orders', {
+        fetch('https://serverless-delta-swart.vercel.app/api/orders', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json; charset=UTF-8',
@@ -61,7 +61,7 @@ window.onload = () => {
                 submit.removeAttribute('disabled')
             })
     }
-    fetch('http://localhost:3000/api/meals')
+    fetch('https://serverless-delta-swart.vercel.app/api/meals')
         .then(x => x.json())
         .then(data => {
             mealsState = data
@@ -71,7 +71,7 @@ window.onload = () => {
             mealsList.removeChild(mealsList.firstElementChild)
             listItems.forEach(element => mealsList.appendChild(element))
             submit.removeAttribute('disabled')
-            fetch('http://localhost:3000/api/orders')
+            fetch('https://serverless-delta-swart.vercel.app/api/orders')
                 .then(response => response.json())
                 .then(ordersData => {
                     const ordersList = document.getElementById('orders-list')
