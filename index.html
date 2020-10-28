@@ -9,12 +9,27 @@
 </head>
 
 <body>
+    <div id="app"></div>
+</body>
+<template id="login-template">
+    <div class="form-main">
+        <p class="form-title">Inicia sesión</p>
+        <form id="login-form" class="login-form">
+            <div>
+                <p>Email</p> <input id="email" placeholder="Email" /></div>
+            <div>
+                <p>Contraseña</p> <input type="password" id="pass" placeholder="Contraseña" /></div>
+            <div><button class="btn block" type="submit">Enviar</button></div>
+        </form>
+    </div>
+</template>
+<template id="orders-view">
     <div id="meals">
         <ul id="meals-list">
             <p>Cargando...</p>
         </ul>
         <form id="order">
-            <input id="submit" type="submit" disabled/>
+            <button id="submit" type="submit" disabled>Enviar</button>
             <input type="hidden" id="meals-id" />
         </form>
     </div>
@@ -24,7 +39,7 @@
             <p>Cargando...</p>
         </ul>
     </div>
-</body>
+</template>
 <script src="main.js"></script>
 
 </html>

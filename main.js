@@ -1,4 +1,6 @@
 let mealsState = []
+let ruta = 'login' //login/register/orders
+let user = {}
 
 const stringToHTML = (s) => {
     const parser = new DOMParser()
@@ -30,7 +32,7 @@ const renderOrder = (order, meals) => {
     return element
 }
 
-window.onload = () => {
+const inicializaFormulario = () => {
     const orderForm = document.getElementById('order')
     orderForm.onsubmit = (e) => {
         e.preventDefault()
@@ -40,17 +42,20 @@ window.onload = () => {
         const mealIdValue = mealId.value
         if (!mealIdValue) {
             alert('Selecciona un plato!')
+            submit.removeAttribute('disabled')
             return
         }
         const order = {
             meal_id: mealIdValue,
-            user_id: 'Itzel',
+            user_id: user._id,
         }
+        const token = localStorage.getItem('token')
 
         fetch('https://serverless-delta-swart.vercel.app/api/orders', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json; charset=UTF-8',
+                    autorization: token,
                 },
                 body: JSON.stringify(order)
             }).then(x => x.json())
@@ -61,6 +66,9 @@ window.onload = () => {
                 submit.removeAttribute('disabled')
             })
     }
+}
+
+const inicializaDatos = () => {
     fetch('https://serverless-delta-swart.vercel.app/api/meals')
         .then(x => x.json())
         .then(data => {
@@ -80,4 +88,61 @@ window.onload = () => {
                     listOrders.forEach(element => ordersList.appendChild(element))
                 })
         })
+}
+
+const renderApp = () => {
+    const token = localStorage.getItem('token')
+    if (token) {
+        user = JSON.parse(localStorage.getItem('user'))
+        return renderOrders()
+    }
+    renderLogin()
+}
+
+const renderOrders = () => {
+    const ordersView = document.getElementById('orders-view')
+    document.getElementById('app').innerHTML = ordersView.innerHTML
+    inicializaFormulario()
+    inicializaDatos()
+}
+
+const renderLogin = () => {
+    const loginTemplate = document.getElementById('login-template')
+    document.getElementById('app').innerHTML = loginTemplate.innerHTML
+    const loginForm = document.getElementById('login-form')
+    loginForm.onsubmit = (e) => {
+        e.preventDefault()
+        const email = document.getElementById('email').value
+        const pass = document.getElementById('pass').value
+
+        fetch('https://serverless-delta-swart.vercel.app/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8',
+                },
+                body: JSON.stringify({ email, pass })
+            }).then(x => x.json()).then(respuesta => {
+                localStorage.setItem('token', respuesta.token)
+                ruta = 'orders'
+                return respuesta.token
+            })
+            .then(token => {
+                return fetch('https://serverless-delta-swart.vercel.app/api/auth/me', {
+                    headers: {
+                        'Content-Type': 'application/json; charset=UTF-8',
+                        autorization: token,
+                    }
+                })
+            })
+            .then(x => x.json())
+            .then(fetcherUser => {
+                localStorage.setItem('user', JSON.stringify(fetcherUser))
+                user = fetcherUser
+                renderOrders()
+            })
+    }
+}
+
+window.onload = () => {
+    renderApp()
 }
